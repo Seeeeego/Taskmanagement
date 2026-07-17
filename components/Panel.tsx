@@ -5,7 +5,7 @@ interface PanelProps {
   children: React.ReactNode;
 }
 
-export function Panel({ title, children }: PanelProps) {
+export default function Panel({ title, children }: PanelProps) {
   return (
     <div>
       <h3>{title}</h3>

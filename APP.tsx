@@ -1,70 +1,66 @@
 import React, { useState } from 'react';
-import { type Task, type PriorityFilter, type SortOrder, type TaskFormData } from './types';
-import { TaskSummary } from './TaskSummary';
-import { TaskFilter } from './TaskFilter';
-import { TaskList } from './TaskList';
-import { TaskForm } from './TaskForm';
+import { type Task, type Priority } from './types';
+import TaskSummary from './components/TaskSummary';
+import TaskFilter from './components/TaskFilter';
+import TaskList from './components/TaskList';
+import TaskForm from './components/TaskForm';
+import { filterTasks, sortTasks } from './utils/taskUtils';
 
-export function App() {
+export default function App() {
+  // C-5: Stateはすべて親コンポーネントに集約
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [priorityFilter, setPriorityFilter] = useState<PriorityFilter>('すべて');
+  const [priorityFilter, setPriorityFilter] = useState<Priority | 'すべて'>('すべて');
   const [hideDone, setHideDone] = useState<boolean>(false);
-  const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
-  const handleAddTask = (formData: TaskFormData) => {
+  const handleAddTask = (formData: Omit<Task, 'id' | 'done'>) => {
     const newTask: Task = {
-      id: crypto.randomUUID(),
+      id: crypto.randomUUID(), // C-2用に一意なIDを設定
       title: formData.title,
       assignee: formData.assignee,
-      priority: formData.priority as Task['priority'],
+      priority: formData.priority,
       dueDate: formData.dueDate,
       done: false,
       memo: formData.memo || undefined,
     };
-    setTasks(prev => [...prev, newTask]);
+    setTasks((prev) => [...prev, newTask]); // C-6: 非破壊で更新
   };
 
   const handleToggleTask = (id: string) => {
-    setTasks(prev =>
-      prev.map(task => (task.id === id ? { ...task, done: !task.done } : task))
+    setTasks((prev) =>
+      prev.map((task) => (task.id === id ? { ...task, done: !task.done } : task))
     );
   };
 
   const handleDeleteTask = (id: string) => {
-    setTasks(prev => prev.filter(task => task.id !== id));
+    setTasks((prev) => prev.filter((task) => task.id !== id));
   };
 
-  const filteredAndSortedTasks = tasks
-    .filter(task => {
-      if (hideDone && task.done) return false;
-      if (priorityFilter !== 'すべて' && task.priority !== priorityFilter) return false;
-      return true;
-    })
-    .sort((a, b) => {
-      const dateA = new Date(a.dueDate).getTime();
-      const dateB = new Date(b.dueDate).getTime();
-      return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
-    });
+  const processedTasks = sortTasks(
+    filterTasks(tasks, priorityFilter, hideDone),
+    sortOrder
+  );
 
   return (
-    <div>
-      <h2>TeamTasks</h2>
-      
-      <TaskSummary tasks={tasks} /> 
-      
-      <TaskFilter 
-        priorityFilter={priorityFilter} 
-        hideDone={hideDone} 
+    <div style={{ padding: '20px' }}>
+      <h2>TeamTasks (UI確認用・機能重視)</h2>
+
+      {/* C-5: コールバックPropsでState管理をリフトアップ */}
+      <TaskSummary tasks={tasks} />
+
+      <TaskFilter
+        priorityFilter={priorityFilter}
+        hideDone={hideDone}
         sortOrder={sortOrder}
         onChangePriority={setPriorityFilter}
         onChangeHideDone={setHideDone}
         onChangeSort={setSortOrder}
       />
-      
-      <TaskList 
-        tasks={filteredAndSortedTasks} 
-        onToggle={handleToggleTask} 
-        onDelete={handleDeleteTask} 
+
+      <TaskList
+        tasks={processedTasks}
+        onToggle={handleToggleTask}
+        onDelete={handleDeleteTask}
       />
 
       <TaskForm onAdd={handleAddTask} />
