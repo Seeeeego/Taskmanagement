@@ -38,7 +38,7 @@ App.tsx
 ```
 
 ## 担当箇所
--青木：TaskItem.tsx,TaskList.tsx
--竹内：TaskForm.tsx,taskSchema.ts
--高橋：TaskFilter.tsx,TaskSummary.tsx
--木村：TaskUtils.ts,App.tsx
+- 青木：TaskItem.tsx,TaskList.tsx
+- 竹内：TaskForm.tsx,taskSchema.ts
+- 高橋：TaskFilter.tsx,TaskSummary.tsx
+- 木村：TaskUtils.ts,App.tsx
