@@ -3,6 +3,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { type Task } from '../types';
 import { taskSchema } from '../schemas/taskSchema';
 import Panel from './Panel';
+import type { InferType } from 'yup';
 
 export default function TaskForm({
   onAdd,
@@ -30,8 +31,9 @@ export default function TaskForm({
     },
   });
 
+  type TaskFormData = InferType<typeof taskSchema>;
   // onSubmit の引数の型は handleSubmit が推論してくれるため、型注釈を省略します
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: TaskFormData) => {
     // 親の Task 互換の型に整理してデータを引き渡す
     onAdd({
       title: data.title,
