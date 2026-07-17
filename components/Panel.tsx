@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface PanelProps {
+type PanelProps = {
   title: string;
   children: React.ReactNode;
 }

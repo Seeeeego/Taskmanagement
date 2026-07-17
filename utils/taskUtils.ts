@@ -1,6 +1,10 @@
 import { type Task, type Priority } from '../types';
 
-// フィルタリング
+/**
+ * 要件1: タスクのフィルタリング
+ * priority が 'すべて' なら全件、それ以外は一致するタスクのみ。
+ * hideDone が true なら完了タスクを除外する。
+ */
 export function filterTasks(
   tasks: Task[], 
   priority: Priority | 'すべて', 
@@ -13,8 +17,11 @@ export function filterTasks(
   });
 }
 
-// ソート (C-6: 非破壊)
-export function sortTasks(tasks: Task[], order: 'asc' | 'desc'): Task[] {
+/**
+ * 要件2: 期限順のソート（非破壊）
+ * 'asc'/'desc' で期限順に並び替えた新しい配列を返す。
+ */
+export function sortTasksByDueDate(tasks: Task[], order: 'asc' | 'desc'): Task[] {
   return [...tasks].sort((a, b) => {
     const timeA = new Date(a.dueDate).getTime();
     const timeB = new Date(b.dueDate).getTime();
@@ -22,12 +29,19 @@ export function sortTasks(tasks: Task[], order: 'asc' | 'desc'): Task[] {
   });
 }
 
-// 集計 (戻り値はタプル型 [総数, 完了数, 完了率, 期限切れ数] にして追加の型定義を回避)
-export function calculateSummary(tasks: Task[], todayStr: string): [number, number, number, number] {
+/**
+ * 要件3: タスクの集計
+ * 指定されたキーを持つオブジェクトを返す。
+ * 0件のときは doneRate を 0 にして NaN を回避する。
+ */
+export function calcSummary(
+  tasks: Task[], 
+  today: string
+): { total: number; done: number; doneRate: number; overdue: number } {
   const total = tasks.length;
-  const completed = tasks.filter((t) => t.done).length;
-  const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
-  const overdue = tasks.filter((t) => !t.done && t.dueDate < todayStr).length;
+  const done = tasks.filter((t) => t.done).length;
+  const doneRate = total > 0 ? Math.round((done / total) * 100) : 0;
+  const overdue = tasks.filter((t) => !t.done && t.dueDate < today).length;
 
-  return [total, completed, percent, overdue];
+  return { total, done, doneRate, overdue };
 }

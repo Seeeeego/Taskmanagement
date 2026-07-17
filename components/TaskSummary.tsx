@@ -1,16 +1,16 @@
 import { type Task } from '../types';
-import { calculateSummary } from '../utils/taskUtils';
+import { calcSummary } from '../utils/taskUtils';
 import Panel from './Panel';
 
 export default function TaskSummary({ tasks }: { tasks: Task[] }) {
   const todayStr = new Date().toISOString().split('T')[0];
-  const [total, completed, percent, overdue] = calculateSummary(tasks, todayStr);
+  const { total, done, doneRate, overdue } = calcSummary(tasks, todayStr);
 
   return (
     <Panel title="全体の進捗">
       <p>
         タスク総数: {total}件 / 
-        完了: {completed}件 ({percent}%)
+        完了: {done}件 ({doneRate}%)
       </p>
       {/* C-3: 条件分岐レンダリング (&&) */}
       {overdue > 0 && (

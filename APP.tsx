@@ -4,7 +4,7 @@ import TaskSummary from './components/TaskSummary';
 import TaskFilter from './components/TaskFilter';
 import TaskList from './components/TaskList';
 import TaskForm from './components/TaskForm';
-import { filterTasks, sortTasks } from './utils/taskUtils';
+import { filterTasks, sortTasksByDueDate } from './utils/taskUtils';
 
 export default function App() {
   // C-5: Stateはすべて親コンポーネントに集約
@@ -36,14 +36,14 @@ export default function App() {
     setTasks((prev) => prev.filter((task) => task.id !== id));
   };
 
-  const processedTasks = sortTasks(
+  const processedTasks = sortTasksByDueDate(
     filterTasks(tasks, priorityFilter, hideDone),
     sortOrder
   );
 
   return (
     <div style={{ padding: '20px' }}>
-      <h2>TeamTasks (UI確認用・機能重視)</h2>
+      <h2>TeamTasks </h2>
 
       {/* C-5: コールバックPropsでState管理をリフトアップ */}
       <TaskSummary tasks={tasks} />
