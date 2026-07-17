@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { type Task, type Priority } from './types';
 import TaskSummary from './components/TaskSummary';
 import TaskFilter from './components/TaskFilter';

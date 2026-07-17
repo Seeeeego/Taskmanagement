@@ -1,4 +1,3 @@
-import React from 'react';
 import { type Task } from '../types';
 import { calculateSummary } from '../utils/taskUtils';
 import Panel from './Panel';
